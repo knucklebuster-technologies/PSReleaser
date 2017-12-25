@@ -1,3 +1,4 @@
+"Doc String"
 [scriptblock]{
     Param (
         [ReleaserConfig]$Config

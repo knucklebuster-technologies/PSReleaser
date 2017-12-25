@@ -7,11 +7,17 @@ $IsDev = $Args.Contains('DEV')
 # Bring in the sources
 #Library
 . "$ReleaserRoot\Library\ReleaserConfig.ps1"
+. "$ReleaserRoot\Library\ReleaserTask.ps1"
 
 #Tasks
 $ReleaserTasks = @{}
 Get-ChildItem -Path "$ReleaserRoot\Tasks" | ForEach-Object {
-    $ReleaserTasks[$_.BaseName] = $(. $_.FullName)
+    $tvals = . $_.FullName
+    $tsk = [ReleaserTask]::New()
+    $tsk.Name = $_.BaseName
+    $tsk.Description = $tvals[0]
+    $tsk.Script = $tvals[1]
+    $ReleaserTasks[$_.BaseName] = $tsk
 }
 if ($IsDev) {
     Export-ModuleMember -Variable 'ReleaserTasks'

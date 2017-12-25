@@ -1,5 +1,4 @@
 
-
 class ReleaserConfig {
     [string]$Name = 'ModuleName'
     [string]$Destination = '.\released'

@@ -1,7 +1,4 @@
-<#
-.DESCRIPTION
-    Long description
-#>
+"This is the ExampleTask Doc String"
 [scriptblock]{
     Param (
         [ReleaserConfig]$Config
