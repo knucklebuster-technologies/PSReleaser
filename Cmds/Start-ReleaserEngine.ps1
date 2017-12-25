@@ -3,15 +3,13 @@
 function Start-ReleaserEngine {
     [CmdletBinding()]
     param (
-        $FilePath = "$(Get-Location)\psreleaser.json"
+        $Path = "$Pwd"
     )
-    
-    begin {
-    }
-    
-    process {
-    }
-    
+
     end {
+        $config = Get-ReleaserConfig -Path $Path
+        $config.Tasks | ForEach-Object {
+            $ReleaserTasks[$PSItem].Script.Invoke($config)
+        }
     }
 }
