@@ -1,6 +1,6 @@
 
 
-function Invoke-Releaser {
+function Start-ReleaserEngine {
     [CmdletBinding()]
     param (
         $FilePath = "$(Get-Location)\psreleaser.json"

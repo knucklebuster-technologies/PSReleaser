@@ -2,15 +2,23 @@
 # Root of this module
 $ReleaserRoot = $PSScriptRoot
 
+$IsDev = $Args.Contains('DEV')
 
 # Bring in the sources
 #Library
 . "$ReleaserRoot\Library\ReleaserConfig.ps1"
 
-# Cmd
-. "$ReleaserRoot\Cmds\New-Releaser.ps1"
-. "$ReleaserRoot\Cmds\Get-Releaser.ps1"
-. "$ReleaserRoot\Cmds\Invoke-Releaser.ps1"
+#Tasks
+$ReleaserTasks = @{}
+Get-ChildItem -Path "$ReleaserRoot\Tasks" | ForEach-Object {
+    $ReleaserTasks[$_.BaseName] = $(. $_.FullName)
+}
+if ($IsDev) {
+    Export-ModuleMember -Variable 'ReleaserTasks'
+}
 
-# Export public module members
-Export-ModuleMember -Function 'New-Releaser', 'Get-Releaser', 'Invoke-Releaser'
+# Cmds
+Get-ChildItem -Path "$ReleaserRoot\Cmds" | ForEach-Object {
+    . $_.FullName
+    Export-ModuleMember -Function $_.BaseName
+}

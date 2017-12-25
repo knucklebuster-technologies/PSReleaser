@@ -1,7 +1,8 @@
 
 
 class ReleaserConfig {
-    [string]$Name = 'module'
+    [string]$Name = 'ModuleName'
     [string]$Destination = '.\released'
-    [string[]]$Tasks = 'archive'
+    [string]$ReleaseType = 'Revision'
+    [string[]]$Tasks = 'UpdateVersion', 'ArchiveModule'
 }

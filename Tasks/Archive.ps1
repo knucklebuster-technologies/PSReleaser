@@ -1,5 +1,0 @@
-Param (
-    $ModuleName,
-    $Version,
-    $DestinationFolder
-)
