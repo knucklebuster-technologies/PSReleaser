@@ -1,7 +1,7 @@
 
 
 class ReleaserConfig {
-    [string]$Name = 'ModuleBaseName'
+    [string]$Name = 'module'
     [string]$Destination = '.\released'
-    [string]$GitAction = 'None'
+    [string[]]$Tasks = 'archive'
 }
