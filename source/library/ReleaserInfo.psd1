@@ -1,5 +1,6 @@
 
 @{
+    ModuleRootPath = '.'
     Config = @{}
     Tasks = @{}
 }

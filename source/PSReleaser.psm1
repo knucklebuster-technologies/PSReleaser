@@ -1,25 +1,22 @@
 
 # Root of this module
 $__ReleaserRoot__ = $PSScriptRoot
-$__ReleaserInfo__ = Import-PowerShellDataFile -Path "$__ReleaserRoot__\Library\ReleaserInfo.psd1"
-$IsDev = $Args.Contains('DEV')
+$__ReleaserInfo__ = Import-PowerShellDataFile -Path "$__ReleaserRoot__\library\ReleaserInfo.psd1"
+$__ReleaserInfo__.Config = Import-PowerShellDataFile -Path "$__ReleaserRoot__\library\ReleaserConfig.psd1"
 
-# Bring in the sources
-#Tasks
-Get-ChildItem -Path "$__ReleaserRoot__\Tasks" | ForEach-Object {
-    $tvals = . $PSItem.FullName
-    $__ReleaserTask__ = Import-PowerShellDataFile -Path "$__ReleaserRoot__\Library\ReleaserTask.psd1"
-    $__ReleaserTask__.Name = $PSItem.BaseName
-    $__ReleaserTask__.Description = $tvals[0]
-    $__ReleaserTask__.ScriptBlock = $tvals[1]
-    $__ReleaserInfo__.Tasks[$PSItem.BaseName] = $__ReleaserTask__
-}
-if ($IsDev) {
-    Export-ModuleMember -Variable '__ReleaserInfo__'
+# Load Tasks
+Get-ChildItem -Path "$__ReleaserRoot__\tasks" -Filter "*.ps1" | ForEach-Object {
+    $RTasks = . $PSItem.FullName
+    $__ReleaserInfo__.Tasks[$RTasks.TaskName] = $RTasks
 }
 
-# Cmds
-Get-ChildItem -Path "$__ReleaserRoot__\Cmds" | ForEach-Object {
+# Export Dev Vars
+if ($Args.Contains('DEV')) {
+    Export-ModuleMember -Variable '__ReleaserInfo__', '__ReleaserRoot__'
+}
+
+# Load and Export Cmds
+Get-ChildItem -Path "$__ReleaserRoot__\cmds\*ps1" | ForEach-Object {
     . $PSItem.FullName
     Export-ModuleMember -Function $PSItem.BaseName
 }
