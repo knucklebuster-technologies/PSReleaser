@@ -20,7 +20,7 @@ function New-ReleaserConfig {
     
     end {
         Copy-Item @{
-            Path = "$__ReleaserRoot__\Library\__ReleaserConfig.psd1" 
+            Path = "$__ReleaserRoot__\Library\ReleaserConfig.psd1" 
             Destination = "$Path\$Name.psd1"
             Force = $Force
         }
