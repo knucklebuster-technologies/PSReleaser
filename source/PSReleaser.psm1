@@ -1,8 +1,8 @@
 
 # Root of this module
 $__ReleaserRoot__ = $PSScriptRoot
-$__ReleaserInfo__ = Import-PowerShellDataFile -Path "$__ReleaserRoot__\library\ReleaserInfo.psd1"
-$__ReleaserInfo__.Config = Import-PowerShellDataFile -Path "$__ReleaserRoot__\library\ReleaserConfig.psd1"
+$__ReleaserInfo__ = Get-ReleaserStructure 'ReleaserInfo'
+$__ReleaserInfo__.Config = Get-ReleaserStructure 'ReleaserConfig'
 
 # Load Tasks
 Get-ChildItem -Path "$__ReleaserRoot__\tasks" -Filter "*.ps1" | ForEach-Object {
