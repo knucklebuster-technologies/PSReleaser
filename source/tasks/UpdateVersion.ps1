@@ -32,7 +32,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             [ref]$cfg
         )
 
-        $modManifest = "$Global:__ReleaserRoot__\$($cfg.Value..ModuleName).psd1"
+        $modManifest = "$Global:__ReleaserRoot__\$($cfg.Value.ModuleName).psd1"
         if (Test-Path -Path $modManifest) {
             $minfo = Import-PowerShellDataFile -Path $modManifest
             [version]$mver = $minfo.
