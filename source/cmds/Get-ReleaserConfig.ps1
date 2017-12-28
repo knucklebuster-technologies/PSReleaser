@@ -8,7 +8,6 @@ function Get-ReleaserConfig {
             throw "$PSItem is not a vaild directory"
         })]
         [string]$Path = "$Pwd",
-        [ValidateNotNullOrEmpty()]
         [string]$Name = "releaser"
     )
     

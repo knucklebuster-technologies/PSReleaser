@@ -23,7 +23,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     [string[]]$ConfigInputs = @()
 
     # Config values added by Task - Many values can be added as outputs
-    [string[]]$ConfigOutputs = @()
+    [string[]]$ConfigOutputs = @('ReleaseVersion')
 
     # InvokeTask runs the tasks operations and any returned values will be found
     # as properties on the Config object.
@@ -32,15 +32,19 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             [ref]$cfg
         )
 
-        $modManifest = "$Global:__ReleaserRoot__\$($cfg.Value.ModuleName).psd1"
+        $modManifest = "$Global:__ReleaserRoot__\$($cfg.Value['ModuleName']).psd1"
         if (Test-Path -Path $modManifest) {
             $minfo = Import-PowerShellDataFile -Path $modManifest
-            [version]$mver = $minfo.
+            [version]$mver = $null
+            [version]::TryParse($minfo.ModuleVersion,([ref]$mver))
             $Major = $mver.Major
             $Minor = $mver.Minor
             $Build = $mver.Build
             $Revision = $mver.Revision + 1
-            [version]$mver = "$Major.$Minor.$Build.$Revision"
+            [version]::TryParse("$Major.$Minor.$Build.$Revision",([ref]$mver))
+            $minfo['ModuleVersion'] = $mver
+            $cfg.Value['ReleaseVersion'] = $mver
+            $cfg.Value['ModuleManifest'] = $minfo
         }
     }
 

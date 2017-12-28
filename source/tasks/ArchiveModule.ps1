@@ -19,13 +19,13 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     # Config values used by Task - Many values can be used as inputs
     [string[]]$ConfigInputs = @(
         'ModuleName',
-        'ModuleVersion',
+        'ReleaseVersion',
         'SourcePath', 
         'ReleasePath'
     )
 
     # Config values added by Task - Many values can be added as outputs
-    [string[]]$ConfigOutputs = @('ReleaseVersion')
+    [string[]]$ConfigOutputs = @()
 
     # InvokeTask runs the tasks operations and any returned values will be found
     # as properties on the Config object.
@@ -35,15 +35,15 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         )
         $ErrorActionPreference = 'Stop'
         # modules name
-        $mn = $cfg.Value.ModuleName
+        $mn = $cfg.Value['ModuleName']
         # module version
-        $mv = 'v' + $cfg.Value.ModuleVersion
+        $mv = 'v' + "$($cfg.Value['ReleaseVersion'])"
         # module version for folder name
         $mvf = "$mv".Replace(".", "_")
 
         # releaser source and destination paths
-        $src = Join-Path -Path $PWD -ChildPath $cfg.Value.SourcePath
-        $dest = Join-Path -Path $PWD -ChildPath $cfg.ReleasePath
+        $src = Join-Path -Path $PWD -ChildPath $cfg.Value['SourcePath']
+        $dest = Join-Path -Path $PWD -ChildPath $cfg.Value['ReleasePath']
         
         # Module destination
         $mdest = "$dest\$mvf\$mn"
@@ -56,6 +56,8 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
 
         # archive module
         Compress-Archive -Path $mdest -DestinationPath $zdest
+
+        $cfg.Value['ArchiveModule'] = 'ran'
     }
 
     Export-ModuleMember -Variable @(

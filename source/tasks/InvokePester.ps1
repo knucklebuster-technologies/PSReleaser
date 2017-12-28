@@ -16,12 +16,12 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     PSReleasers CI / CR system. It Will print 'Hello World From ExampleTask' to the console
     using Write-Host (puppie killerz)
 "@
+
     # Config values used by Task - Many values can be used as inputs
     [string[]]$ConfigInputs = @()
 
     # Config values added by Task - Many values can be added as outputs
-    [string[]]$ConfigOutputs = @('GitAddAllSuccess')
-
+    [string[]]$ConfigOutputs = @()
 
     # InvokeTask runs the tasks operations and any returned values will be found
     # as properties on the Config object.
@@ -29,11 +29,9 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         Param (
             [ref]$cfg
         )
-        $ErrorActionPreference = 'Stop'
-        Push-Location -Path $Global:__ReleaserRoot__
-        Invoke-Expression -Command 'git add --all'
+        Push-Location -Path (Resolve-Path $cfg.Value.TestPath)
+        Invoke-Pester
         Pop-Location
-        $cfg.Value['GitAddAll'] = 'ran'
     }
 
     Export-ModuleMember -Variable @(
