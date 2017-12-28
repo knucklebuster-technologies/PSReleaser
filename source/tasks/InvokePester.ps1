@@ -30,8 +30,17 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             [ref]$cfg
         )
         Push-Location -Path (Resolve-Path $cfg.Value.TestPath)
-        Invoke-Pester
-        Pop-Location
+        try {
+            $ErrorActionPreference = 'Stop'
+            Invoke-Pester
+            return $true
+        }
+        catch {
+            return $false
+        }
+        finally {
+            Pop-Location
+        }
     }
 
     Export-ModuleMember -Variable @(

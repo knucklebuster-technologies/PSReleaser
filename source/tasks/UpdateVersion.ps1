@@ -31,20 +31,26 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         Param (
             [ref]$cfg
         )
-
-        $modManifest = "$Global:__ReleaserRoot__\$($cfg.Value['ModuleName']).psd1"
-        if (Test-Path -Path $modManifest) {
-            $minfo = Import-PowerShellDataFile -Path $modManifest
-            [version]$mver = $null
-            [version]::TryParse($minfo.ModuleVersion,([ref]$mver))
-            $Major = $mver.Major
-            $Minor = $mver.Minor
-            $Build = $mver.Build
-            $Revision = $mver.Revision + 1
-            [version]::TryParse("$Major.$Minor.$Build.$Revision",([ref]$mver))
-            $minfo['ModuleVersion'] = $mver
-            $cfg.Value['ReleaseVersion'] = $mver
-            $cfg.Value['ModuleManifest'] = $minfo
+        try {
+            $ErrorActionPreference = 'Stop'
+            $modManifest = "$Global:__ReleaserRoot__\$($cfg.Value['ModuleName']).psd1"
+            if (Test-Path -Path $modManifest) {
+                $minfo = Import-PowerShellDataFile -Path $modManifest
+                [version]$mver = $null
+                [version]::TryParse($minfo.ModuleVersion,([ref]$mver))
+                $Major = $mver.Major
+                $Minor = $mver.Minor
+                $Build = $mver.Build
+                $Revision = $mver.Revision + 1
+                [version]::TryParse("$Major.$Minor.$Build.$Revision",([ref]$mver))
+                $minfo['ModuleVersion'] = $mver
+                $cfg.Value['ReleaseVersion'] = $mver
+                $cfg.Value['ModuleManifest'] = $minfo
+            }
+            retrun $true
+        }
+        catch {
+            return $false
         }
     }
 

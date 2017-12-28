@@ -29,11 +29,17 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         Param (
             [ref]$cfg
         )
-        $ErrorActionPreference = 'Stop'
-        Push-Location -Path $Global:__ReleaserRoot__
-        Invoke-Expression -Command 'git add --all'
-        Pop-Location
-        $cfg.Value['GitAddAll'] = 'ran'
+        try {
+            $ErrorActionPreference = 'Stop'
+            Push-Location -Path $Global:__ReleaserRoot__
+            Invoke-Expression -Command 'git add --all'
+            Pop-Location
+            $cfg.Value['GitAddAll'] = 'ran'
+            retrun $true
+        }
+        catch {
+            return $false
+        }
     }
 
     Export-ModuleMember -Variable @(

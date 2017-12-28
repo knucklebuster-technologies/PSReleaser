@@ -33,31 +33,38 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         Param (
             [ref]$cfg
         )
-        $ErrorActionPreference = 'Stop'
-        # modules name
-        $mn = $cfg.Value['ModuleName']
-        # module version
-        $mv = 'v' + "$($cfg.Value['ReleaseVersion'])"
-        # module version for folder name
-        $mvf = "$mv".Replace(".", "_")
+        try {
+            $ErrorActionPreference = 'Stop'
+            # modules name
+            $mn = $cfg.Value['ModuleName']
+            # module version
+            $mv = 'v' + "$($cfg.Value['ReleaseVersion'])"
+            # module version for folder name
+            $mvf = "$mv".Replace(".", "_")
 
-        # releaser source and destination paths
-        $src = Join-Path -Path $PWD -ChildPath $cfg.Value['SourcePath']
-        $dest = Join-Path -Path $PWD -ChildPath $cfg.Value['ReleasePath']
-        
-        # Module destination
-        $mdest = "$dest\$mvf\$mn"
+            # releaser source and destination paths
+            $src = Join-Path -Path $PWD -ChildPath $cfg.Value['SourcePath']
+            $dest = Join-Path -Path $PWD -ChildPath $cfg.Value['ReleasePath']
+            
+            # Module destination
+            $mdest = "$dest\$mvf\$mn"
 
-        # assemble the module
-        Copy-Item -Path $src -Destination $mdest -Recurse -Force
+            # assemble the module
+            Copy-Item -Path $src -Destination $mdest -Recurse -Force
 
-        # zip archive dest
-        $zdest = "$dest\$mvf\$mn" + '_' + "$mv" + '.zip'
+            # zip archive dest
+            $zdest = "$dest\$mvf\$mn" + '_' + "$mv" + '.zip'
 
-        # archive module
-        Compress-Archive -Path $mdest -DestinationPath $zdest
+            # archive module
+            Compress-Archive -Path $mdest -DestinationPath $zdest
 
-        $cfg.Value['ArchiveModule'] = 'ran'
+            $cfg.Value['ArchiveModule'] = 'ran'
+
+            return $true
+        }
+        catch {
+            return $false
+        }
     }
 
     Export-ModuleMember -Variable @(
