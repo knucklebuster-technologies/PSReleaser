@@ -7,9 +7,9 @@ function Start-ReleaserEngine {
     )
 
     end {
-        $config = Get-ReleaserConfig -Path $Path
-        $config.Tasks | ForEach-Object {
-            $ReleaserInfo.Tasks[$PSItem].Script.Invoke($config)
+        $Global:__ReleaserInfo__.Config = Get-ReleaserConfig -Path $Path
+        $Global:__ReleaserInfo__.Config | ForEach-Object {
+            $Global:__ReleaserInfo__.Tasks[$PSItem].InvokeTask(([ref]$Global:__ReleaserInfo__.Config))
         }
     }
 }

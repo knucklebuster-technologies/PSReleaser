@@ -5,29 +5,45 @@
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     
     # TaskName is ArchiveModule
-    $TaskName = $([IO.FileInfo]"$PSCommandPath").BaseName
+    [string]$TaskName = $([IO.FileInfo]"$PSCommandPath").BaseName
     
     # Tasks is for public use
-    $Public = $true
+    [bool]$Public = $true
     
     # A detailed paragragh on what and how this task is to be used.
-    $Description = "ArchiveModule task perform the action of assembling the module
-    into a specified location and then is compressed into a zipped archive"
+    [string]$Description = @"
+    ArchiveModule task perform the action of assembling the module
+    into a specified location and then is compressed into a zipped archive
+"@
+
+    # Config values used by Task - Many values can be used as inputs
+    [string[]]$ConfigInputs = @(
+        'ModuleName',
+        'ModuleVersion',
+        'SourcePath', 
+        'ReleasePath'
+    )
+
+    # Config values added by Task - Many values can be added as outputs
+    [string[]]$ConfigOutputs = @('ReleaseVersion')
 
     # InvokeTask runs the tasks operations and any returned values will be found
     # as properties on the Config object.
     function InvokeTask {
+        Param (
+            [ref]$cfg
+        )
         $ErrorActionPreference = 'Stop'
         # modules name
-        $mn = $__ReleaserInfo__.Config.ModuleName
+        $mn = $cfg.Value.ModuleName
         # module version
-        $mv = 'v' + $__ReleaserInfo__.Config.ModuleVersion
+        $mv = 'v' + $cfg.Value.ModuleVersion
         # module version for folder name
         $mvf = "$mv".Replace(".", "_")
 
         # releaser source and destination paths
-        $src = Join-Path -Path $PWD -ChildPath $__ReleaserInfo__.Config.SourcePath
-        $dest = Join-Path -Path $PWD -ChildPath $__ReleaserInfo__.Config.ReleasePath
+        $src = Join-Path -Path $PWD -ChildPath $cfg.Value.SourcePath
+        $dest = Join-Path -Path $PWD -ChildPath $cfg.ReleasePath
         
         # Module destination
         $mdest = "$dest\$mvf\$mn"
@@ -42,5 +58,11 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         Compress-Archive -Path $mdest -DestinationPath $zdest
     }
 
-    Export-ModuleMember -Variable 'TaskName', 'Internal', 'Description' -Function 'InvokeTask'
+    Export-ModuleMember -Variable @(
+        'TaskName', 
+        'Internal', 
+        'Description'
+        'ConfigInputs'
+        'ConfigOutputs'
+     ) -Function 'InvokeTask'
 } -AsCustomObject
