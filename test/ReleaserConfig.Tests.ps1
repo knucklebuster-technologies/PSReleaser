@@ -1,7 +1,7 @@
 ﻿$parent = Split-Path -Path $PSScriptRoot -Parent
-$out = "$parent\library\ReleaserConfig.psd1"
+$out = "$parent\models\RlsrConfig.psd1"
 $cfg = Import-PowerShellDataFile -Path $out
-Describe "ReleaserConfig" {
+Describe "RlsrConfig" {
     It "does something useful" {
         $true | Should Be $false
     }

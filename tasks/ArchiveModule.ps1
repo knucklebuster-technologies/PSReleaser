@@ -19,7 +19,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     # Config values used by Task - Many values can be used as inputs
     [string[]]$ConfigInputs = @(
         'ModuleName',
-        'ReleaseVersion',
+        'ModuleManifest.ModuleVersion',
         'SourcePath', 
         'ReleasePath'
     )
@@ -31,39 +31,44 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     # as properties on the Config object.
     function InvokeTask {
         Param (
-            [ref]$cfg
+            [ref]$project
         )
         try {
             $ErrorActionPreference = 'Stop'
             # modules name
-            $mn = $cfg.Value['ModuleName']
+            $mn = $project.Value.Cfg.ModuleName
+            Write-Verbose -Message "ArchiveModule Name: $mn"
+
             # module version
-            $mv = 'v' + "$($cfg.Value['ReleaseVersion'])"
+            $mv = $project.Value.Manifest.ModuleVersion.ToSemver()
+            Write-Verbose -Message "ArchiveModule Tag: $mv"
+
             # module version for folder name
             $mvf = "$mv".Replace(".", "_")
 
-            # releaser source and destination paths
-            $src = Join-Path -Path $PWD -ChildPath $cfg.Value['SourcePath']
-            $dest = Join-Path -Path $PWD -ChildPath $cfg.Value['ReleasePath']
+            # releaser source path
+            $src = Join-Path -Path $PWD -ChildPath $project.Value.Cfg.SourcePath
             
-            # Module destination
+            
+            # Module destination path
+            $dest = Join-Path -Path $PWD -ChildPath $project.Value.Cfg.ReleasePath
             $mdest = "$dest\$mvf\$mn"
+            
 
-            # assemble the module
+            # copy the module
             Copy-Item -Path $src -Destination $mdest -Recurse -Force
+            Write-Verbose -Message "ArchiveModule Released: $mdest"
 
             # zip archive dest
-            $zdest = "$dest\$mvf\$mn" + '_' + "$mv" + '.zip'
+            $zdest = "$dest\$mvf\$mn" + '.' + "$mv" + '.zip'
 
             # archive module
-            Compress-Archive -Path $mdest -DestinationPath $zdest
-
-            $cfg.Value['ArchiveModule'] = 'ran'
-
-            return $true
+            Compress-Archive -Path $mdest -DestinationPath $zdest -Force
+            Write-Verbose -Message "ArchiveModule Zipped: $zdest"
+            $true
         }
         catch {
-            return $false
+            $false
         }
     }
 

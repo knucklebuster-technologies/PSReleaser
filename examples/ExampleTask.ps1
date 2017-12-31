@@ -29,7 +29,14 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         Param (
             [ref]$cfg
         )
-        Write-Host 'Hello World From ExampleTask' -BackgroundColor White -ForegroundColor Black
+        try {
+            $ErrorActionPreference = 'Stop'
+            Write-Verbose -Message 'Hello World From ExampleTask'
+            $true
+        }
+        catch {
+            $PSItem
+        }
     }
 
     Export-ModuleMember -Variable @(
