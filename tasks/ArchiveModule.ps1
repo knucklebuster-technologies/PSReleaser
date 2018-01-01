@@ -1,22 +1,15 @@
 <#
-    ArchiveModule is a task inside of PSReleasers CI / CR system that assembles the module.
+    ArchiveModule is a task inside of RlserCR system that assembles the module.
     After assembly it is compressed into a zip archive
 #>
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
-    
-    # TaskName is ArchiveModule
     [string]$TaskName = $([IO.FileInfo]"$PSCommandPath").BaseName
-    
-    # Tasks is for public use
     [bool]$Public = $true
-    
-    # A detailed paragragh on what and how this task is to be used.
     [string]$Description = @"
     ArchiveModule task perform the action of assembling the module
     into a specified location and then is compressed into a zipped archive
 "@
 
-    # Config values used by Task - Many values can be used as inputs
     [string[]]$ConfigInputs = @(
         'ModuleName',
         'ModuleManifest.ModuleVersion',
@@ -24,15 +17,17 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         'ReleasePath'
     )
 
-    # Config values added by Task - Many values can be added as outputs
-    [string[]]$ConfigOutputs = @()
+    [string[]]$ConfigOutputs = @(   
+    )
 
-    # InvokeTask runs the tasks operations and any returned values will be found
-    # as properties on the Config object.
     function InvokeTask {
+        [CmdletBinding()]
         Param (
-            [ref]$project
+            [Parameter(Mandatory, HelpMessage='Reference variable pointing to an instance of the RlsrProject model being run.')]
+            [ref]
+            $project
         )
+
         try {
             $ErrorActionPreference = 'Stop'
             # modules name

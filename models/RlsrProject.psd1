@@ -1,11 +1,13 @@
 
 @{
-    RunName    = ''
-    Cfg        = @{}
-    Manifest   = @{}
-    TaskOutput = @{}
-    Log        = @()
-    Status     = 'Stopped'
-    Success    = $false
-    Timestamp  = $null
-}
+    Timestamp      = '20173112013555'
+    RunName        = 'null::20173112011045'
+    Cfg            = @{
+    }
+    Manifest       = @{
+    }
+    TasksCompleted = @(
+    )
+    TaskLogger     = @(
+    )
+} 
