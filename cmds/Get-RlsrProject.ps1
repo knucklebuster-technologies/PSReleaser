@@ -13,7 +13,8 @@ function Get-RlsrProject {
         else {
             Write-Error @{
                 'Message'  = "The project obj $prjpath does not exist" 
-                'Catagory' = 'ObjectNotFound' 
+                'Catagory' = 'ObjectNotFound'
+                'ErrorID'  = 'Get-RlsrProject' 
             }
         }
     }

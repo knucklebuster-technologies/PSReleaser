@@ -23,9 +23,10 @@ function Get-RlsrConfig {
             Write-Verbose -Message "The project cfg $cfgpath was imported"
         }
         else {
-            Write-Error @{
+            Write-Error - @{
                 'Message'  = "The project cfg $cfgpath does not exist" 
-                'Catagory' = 'ObjectNotFound' 
+                'Catagory' = 'ObjectNotFound'
+                'ErrorID'  = 'Get-RlsrConfig' 
             }
         }
     }

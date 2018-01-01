@@ -1,7 +1,7 @@
 
 @{
     RootPath = ''
-    Config = @{}
-    Tasks = @{}
+    Config   = @{}
+    Tasks    = @{}
     Projects = @()
 }

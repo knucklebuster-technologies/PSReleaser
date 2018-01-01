@@ -21,17 +21,18 @@ function Start-RlsrEngine {
         $p.Cfg.TaskSequence | ForEach-Object {
             $taskname = "$PSItem"
             Write-Verbose -Message "Task Invocation: $taskname invoked"
-            if ($RlsrInfo.Tasks[$taskname].InvokeTask(([ref]$p))) {
+            $ok = $RlsrInfo.Tasks[$taskname].InvokeTask(([ref]$p))
+            $p.Running = $false
+
+            if ($ok -eq $true) {
+                $p.Status = 'Completed'
                 Write-Verbose -Message "Task Success: $taskname successful"
             }
             else {
-                $null = $p.Log.Where({$PSItem -Like 'ERROR|*'})
-            }
-            
+                $p.Status = 'Failed'
+            }  
         }
 
-        $p.Status = 'Completed'
-        $p.Running = $false
         $RlsrInfo.Projects += $p
     }
 }

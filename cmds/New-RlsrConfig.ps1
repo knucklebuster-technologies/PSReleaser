@@ -30,9 +30,10 @@ function New-RlsrConfig {
             Write-Verbose -Message "Project cfg $d was created"
         }
         catch {
-            Write-Verbose @{
+            Write-Error @{
                 'Message'  = "Project cfg $d was not created"
                 'Category' = "WriteError"
+                'ErrorID'  = "New-RlsrConfig"
             }
         }
     }
