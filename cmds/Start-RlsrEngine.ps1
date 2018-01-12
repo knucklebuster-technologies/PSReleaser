@@ -4,16 +4,20 @@ function Start-RlsrEngine {
     [CmdletBinding()]
     param (
         $Path = "$Pwd",
-        $Name = 'releaser'
+        $Name = '*'
     )
 
     end {
+        $ErrorActionPreference = 'Stop'
         Write-Verbose -Message "Engine Values: Path=$Path, Name=$Name"
+        $Path = Resolve-Path -Path $Path
+        Write-Verbose -Message "Directory Path: $Path"
         $p = Get-RlsrProject
         $p.Timestamp = [DateTime]::NoW.ToString('yyyyMMddHHmmss')
         $p.Cfg = Get-RlsrConfig -Path $Path -Name $Name
         $p.RunName = $p.Cfg.ModuleName + '::' + $p.Timestamp
-        $p.Manifest = Test-ModuleManifest -Path "$($p.Cfg.SourcePath)\$($p.Cfg.ModuleName).psd1"
+        $p.Manifest = Test-ModuleManifest -Path "$Path\$($p.Cfg.ModuleName).psd1"
+        $p.LockInfo = Get-RlsrLockInfo -Path $Path -CfgPath $p.Cfg.FullPath
         $p.Status = 'Running'
         $p.Running = $true
         
@@ -33,6 +37,7 @@ function Start-RlsrEngine {
             }  
         }
 
+        Set-RlsrLockInfo -Path $Path -CfgPath $p.Cfg.FullPath -InputObject $p.LockInfo
         $RlsrInfo.Projects += $p
     }
 }

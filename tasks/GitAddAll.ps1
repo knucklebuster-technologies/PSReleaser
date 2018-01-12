@@ -30,7 +30,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             [ref]$project
         )
         $ErrorActionPreference = 'Stop'
-        Push-Location -Path $project.Value.Cfg.SourcePath
+        Push-Location -Path (Split-Path $project.Value.Cfg.FullPath -Parent)
         Invoke-Expression -Command 'git add --all'
         if($LASTEXITCODE -eq 0) {
             $true

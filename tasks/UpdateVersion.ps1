@@ -62,6 +62,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             }
             
             $null = [version]::TryParse("$Major.$Minor.$Build.$Revision", ([ref]$mver))
+            $project.Value.Log('INFO', 'UpdateVersion', "Updated Version: $Major.$Minor.$Build.$Revision")
             $project.Value.Manifest.ModuleVersion = $mver | 
             Add-Member -MemberType 'NoteProperty' -Name 'Patch' -Value $this.Build -Force -PassThru |
             Add-Member -MemberType 'NoteProperty' -Name 'Phase' -Value $project.Value.Cfg.ReleasePhase -Force -PassThru |
@@ -72,7 +73,6 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
                 }
                 return $bver + '-' + $this.ReleasePhase
             } -Force -PassThru
-
             $true
         }
         catch {

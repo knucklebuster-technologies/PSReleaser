@@ -29,13 +29,22 @@ function New-RlsrLogEntry {
     )
     
     end {
-        Write-Output @{
-            'Timestamp'   = $Timestamp
-            'Level'       = $Level
-            'RunName'     = $RunName
-            'Context'     = $Context
-            'Message'     = $Message
-            'LogEntry'    = [string]::Join(' || ', $Timestamp, $Level, $RunName, $Context, $Message)
-        }
+        [PSCustomObject] @{
+            Timestamp = $Timestamp
+            Level     = $Level
+            RunName   = $RunName
+            Context   = $Context
+            Message   = $Message
+        } |
+        Add-Member -MemberType ScriptMethod -Name ToString -Value {
+            [string]::Join(
+                '||',
+                $this.Timestamp,
+                $this.Level,
+                $this.RunName,
+                $this.Context, 
+                $this.Message
+            )
+        } -Force -PassThru
     }
 }

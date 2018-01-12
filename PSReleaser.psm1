@@ -1,3 +1,5 @@
+# Import Dependancies
+Import-Module "$PSScriptRoot\modules\PSSemanticVersion" -Force -Scope Local
 
 $RlsrInfo = Import-PowerShellDataFile "$PSScriptRoot\models\RlsrInfo.psd1"
 $RlsrInfo.RootPath = $PSScriptRoot
