@@ -277,6 +277,7 @@ __pycache__/
 # PSReleaser
 restic/
 backup.cmd
+rlsrcr1.lock.json
 
 # !tools/packages.config
 
@@ -288,3 +289,4 @@ backup.cmd
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+rlsrcr1.lock.json
