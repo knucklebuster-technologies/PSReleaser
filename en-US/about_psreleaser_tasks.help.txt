@@ -22,4 +22,4 @@ KEYWORDS
     Release, CR, CI
 
 SEE ALSO
-    Text-only references for further reading. Hyperlinks cannot work in the Windows PowerShell console. 
+    about_psreleaser_updateversion
