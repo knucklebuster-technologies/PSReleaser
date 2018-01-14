@@ -1,22 +1,23 @@
 # Import Dependancies
 Import-Module "$PSScriptRoot\modules\PSSemanticVersion" -Force -Scope Local
 
-$RlsrInfo = Import-PowerShellDataFile "$PSScriptRoot\models\RlsrInfo.psd1"
-$RlsrInfo.RootPath = $PSScriptRoot
-
-# Load Tasks
-Get-ChildItem -Path "$($RlsrInfo.RootPath)\tasks" | ForEach-Object {
-    $RTasks = . $PSItem.FullName
-    $RlsrInfo.Tasks[$RTasks.TaskName] = $RTasks
-}
-
-# Export Dev Vars
-if ($Args.Contains('DEV')) {
-    Export-ModuleMember -Variable 'RlsrInfo'
+# Load and Export Vars
+Get-ChildItem -Path "$PSScriptRoot\vars\*ps1" | ForEach-Object {
+    . $PSItem.FullName
+    Export-ModuleMember -Variable $PSItem.BaseName
 }
 
 # Load and Export Cmds
-Get-ChildItem -Path "$($RlsrInfo.RootPath)\cmds\*ps1" | ForEach-Object {
+Get-ChildItem -Path "$PSScriptRoot\cmds\*ps1" | ForEach-Object {
     . $PSItem.FullName
     Export-ModuleMember -Function $PSItem.BaseName
+}
+
+# Set Var Properties
+$RlsrInfo.RootPath = $PSScriptRoot
+
+# Load Tasks
+Get-ChildItem -Path "$PSScriptRoot\tasks" | ForEach-Object {
+    $RTasks = . $PSItem.FullName
+    $RlsrInfo.Tasks[$RTasks.TaskName] = $RTasks
 }

@@ -7,20 +7,29 @@ function Get-RlsrProject {
     end {
         try {
             $ErrorActionPreference = 'Stop'
-            $prjpath = "$($RlsrInfo.RootPath)\models\RlsrProject.psd1"
-            [PSCustomObject] $(Import-PowerShellDataFile -Path $prjpath) |
-                Add-Member -MemberType ScriptMethod -Name Log -Value {
+            [PSCustomObject] @{
+                Timestamp  = '20173112013555'
+                RunName    = 'null::20173112011045'
+                Status     = 'New'
+                Running    = 'False'
+                Cfg        = @{}
+                Manifest   = @{}
+                LockInfo   = @{}
+                Completed  = @()
+                LogEntries = @()
+            } |
+            Add-Member -MemberType ScriptMethod -Name Log -Value {
                 Param (
                     [Parameter(Mandatory, HelpMessage = 'The log entries serverity level')]
                     [ValidateSet('INFO', 'WARN', 'ERROR', 'FATAL', 'DEBUG', 'VERBOSE')]
                     [string]
                     $Level,
-                    
+                
                     [Parameter(Mandatory, HelpMessage = 'Context is the name (Id) of the script, block, function, or variable generating the entry')]
                     [ValidateNotNullOrEmpty()]
                     [string]
                     $Context,
-
+        
                     [Parameter(Mandatory, HelpMessage = 'Description of a specific tasks event')]
                     [ValidateNotNullOrEmpty()]
                     [string]
@@ -30,7 +39,7 @@ function Get-RlsrProject {
                 $this.LogEntries += $LogEntry
                 $LogEntry.ToString() | Write-Host -ForegroundColor Blue
             } -Force -PassThru
-            Write-Verbose -Message "The project obj $prjpath was imported"
+            Write-Verbose -Message "The project obj was created"
         }
         catch {
             Write-Error @{
