@@ -4,22 +4,23 @@
     back to the configuration
 #>
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
-    [string]$TaskName = $([IO.FileInfo]"$PSCommandPath").BaseName
+    [string]$Name = $([IO.FileInfo]"$PSCommandPath").BaseName
     [bool]$Public = $true
-    [string[]]$ConfigInputs = @('Manifest.Version', 'ReleaseType', 'ReleasePhase')
-    [string[]]$ConfigOutputs = @('Manifest.Version')
+    [string[]]$Inputs = @('Cfg.Manifest.Version', 'Cfg.ReleaseType', 'Cfg.ReleasePhase')
+    [string[]]$Outputs = @('Cfg.Manifest.Version', 'LockInfo.Version')
     [string]$Description = 'Used by the system to create a unique version for this run / release'
-
     function InvokeTask {
         Param (
             [ref]$project
         )
+
+        $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Starting Task')
         try {
             $ErrorActionPreference = 'Stop'
             
             # Get the current module version
             $mver = [version]::Parse("$($project.Value.Manifest.Version)")
-            $project.Value.Log('INFO', 'TASK: UpdateVersion', "Starting Version from Manifest $mver")
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from Manifest $mver")
 
             # Get the parts of the version
             $Major, $Minor, $Build, $Revision = $mver.Major, $mver.Minor, $mver.Build, $mver.Revision
@@ -48,24 +49,26 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             
             # Put together part of the version
             $mver = [version] "$Major.$Minor.$Build.$Revision"
+
             # Update the module manifest
             $project.Value.Manifest | 
             Add-Member -MemberType NoteProperty -Name 'Version' -Value $mver -Force
             $project.Value.LockInfo |
             Add-Member -MemberType NoteProperty -Name 'Version' -Value "$mver" -Force
-            $project.Value.Log('INFO', 'TASK: UpdateVersion', "Updated Version to Manifest: $mver")
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version to Manifest: $mver")
             $true
         }
         catch {
             $false
         }
+        $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Ending Task')
     }
 
     Export-ModuleMember -Variable @(
-        'TaskName', 
-        'Internal', 
+        'Name', 
+        'Public', 
         'Description'
-        'ConfigInputs'
-        'ConfigOutputs'
+        'Inputs'
+        'Outputs'
     ) -Function 'InvokeTask'
 } -AsCustomObject

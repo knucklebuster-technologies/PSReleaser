@@ -3,32 +3,23 @@
     PSReleasers CI / CR system.
 #>
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
-    
     # TaskName will be ExampleTask
-    [string]$TaskName = $([IO.FileInfo]"$PSCommandPath").BaseName
-    
+    [string]$Name = $([IO.FileInfo]"$PSCommandPath").BaseName
     # This task is public
     [bool]$Public = $true
-    
-    # A detailed paragragh on what and how this task is to be used.
-    [string]$Description = @"
-    The minimum you need to create a new task inside of
-    PSReleasers CI / CR system. It Will print 'Hello World From ExampleTask' to the console
-    using Write-Host (puppie killerz)
-"@
-
-    # Config values used by Task - Many values can be used as inputs
-    [string[]]$ConfigInputs = @()
-
-    # Config values added by Task - Many values can be added as outputs
-    [string[]]$ConfigOutputs = @()
-
-    # InvokeTask runs the tasks operations and any returned values will be found
-    # as properties on the Config object.
+    # Value inputs used by Task
+    [string[]]$Inputs = @()
+    # Value outputs created by task
+    [string[]]$Outputs = @()
+    # describe the task and its operations
+    [string]$Description = 'Describe the Task'
+    # InvokeTask runs the tasks operations
     function InvokeTask {
         Param (
-            [ref]$cfg
+            [ref]$project
         )
+
+        $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Starting Task')
         try {
             $ErrorActionPreference = 'Stop'
             Write-Verbose -Message 'Hello World From ExampleTask'
@@ -37,13 +28,15 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         catch {
             $PSItem
         }
+        $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Ending Task')
+
     }
 
     Export-ModuleMember -Variable @(
-        'TaskName', 
-        'Internal', 
+        'Name', 
+        'Public', 
         'Description'
-        'ConfigInputs'
-        'ConfigOutputs'
+        'Inputs'
+        'Outputs'
      ) -Function 'InvokeTask'
 } -AsCustomObject

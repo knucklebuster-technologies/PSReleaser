@@ -19,5 +19,5 @@ $RlsrInfo.RootPath = $PSScriptRoot
 # Load Tasks
 Get-ChildItem -Path "$PSScriptRoot\tasks" | ForEach-Object {
     $RTasks = . $PSItem.FullName
-    $RlsrInfo.Tasks[$RTasks.TaskName] = $RTasks
+    $RlsrInfo.Tasks[$RTasks.Name] = $RTasks
 }

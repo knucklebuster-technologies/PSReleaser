@@ -3,23 +3,14 @@
     After assembly it is compressed into a zip archive
 #>
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
-    [string]$TaskName = $([IO.FileInfo]"$PSCommandPath").BaseName
+    [string]$Name = $([IO.FileInfo]"$PSCommandPath").BaseName
     [bool]$Public = $true
+    [string[]]$Inputs = @('LockInfo.Name', 'LockInfo.Version', 'Cfg.FullPath', 'Cfg.ReleasePath')
+    [string[]]$Outputs = @()
     [string]$Description = @"
     ArchiveModule task perform the action of assembling the module
     into a specified location and then is compressed into a zipped archive
 "@
-
-    [string[]]$ConfigInputs = @(
-        'ModuleName',
-        'ModuleManifest.ModuleVersion',
-        'SourcePath', 
-        'ReleasePath'
-    )
-
-    [string[]]$ConfigOutputs = @(   
-    )
-
     function InvokeTask {
         [CmdletBinding()]
         Param (
@@ -28,6 +19,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             $project
         )
 
+        $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Starting Task')
         try {
             $ErrorActionPreference = 'Stop'
             # modules name
@@ -65,13 +57,15 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         catch {
             $false
         }
+        $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Ending Task')
+
     }
 
     Export-ModuleMember -Variable @(
-        'TaskName', 
-        'Internal', 
+        'Name', 
+        'Public', 
         'Description'
-        'ConfigInputs'
-        'ConfigOutputs'
+        'Inputs'
+        'Outputs'
      ) -Function 'InvokeTask'
 } -AsCustomObject
