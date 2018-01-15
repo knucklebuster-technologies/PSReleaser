@@ -19,9 +19,11 @@ function Set-RlsrLockInfo {
         try {
             $ErrorActionPreference = 'Stop'
             $lckpath = Join-Path -Path $Path -ChildPath "rlsrcr1.lock.json"
-            $lckinfo = Get-Content -Path $lckpath -Force | ConvertFrom-Json
-            $lckinfo | Add-Member -MemberType NoteProperty -Name "$CfgPath" -Value $InputObject -Force
-            $lckinfo | ConvertTo-Json | Out-File -FilePath $lckpath -Force
+            Get-Content -Path $lckpath -Force | 
+            ConvertFrom-Json | 
+            Add-Member -MemberType NoteProperty -Name "$CfgPath" -Value $InputObject -Force -PassThru |
+            ConvertTo-Json |
+            Out-File -FilePath $lckpath -Force
             Write-Verbose -Message "The lock file $lckpath was updated"
         }
         catch {
