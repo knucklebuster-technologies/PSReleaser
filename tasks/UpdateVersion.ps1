@@ -1,14 +1,9 @@
-<#
-    UpdateVersion is a task inside of PSReleasers CI / CR system that gets the last built version
-    and increments it a a variety of ways and can write the value back to module mainfest or just
-    back to the configuration
-#>
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     [string]$Name = $([IO.FileInfo]"$PSCommandPath").BaseName
     [bool]$Public = $true
-    [string[]]$Inputs = @('Cfg.Manifest.Version', 'Cfg.ReleaseType', 'Cfg.ReleasePhase')
-    [string[]]$Outputs = @('Cfg.Manifest.Version', 'LockInfo.Version')
-    [string]$Description = 'Used by the system to create a unique version for this run / release'
+    [string[]]$Inputs = @('LockInfo.Version', 'Cfg.BuildType', 'Cfg.PreReleaseTag')
+    [string[]]$Outputs = @('LockInfo.Version')
+    [string]$Description = 'Create a unique version for the project release'
     function InvokeTask {
         Param (
             [ref]$project
@@ -18,10 +13,8 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         try {
             $ErrorActionPreference = 'Stop'
             
-            # Get the current module version
-            $mver = [version]::Parse("$($project.Value.Manifest.Version)")
-            $semver = New-SemanticVersion -Major $mver.Major -Minor $mver.Minor -Patch $mver.Build -BuildRevision $mver.Revision -PrereleaseTag $project.Value.Cfg.PrereleaseTag
-            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from Manifest $semver")
+            $semver = $(New-SemanticVersion).Parse($project.Value.LockInfo.Version)
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from LockFile $semver")
 
             # Increment the parts of the version
             switch ($project.Value.Cfg.BuildType) {
@@ -36,18 +29,20 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
                     $semver.Patch = 0
                     $semver.BuildRevision = $semver.BuildRevision + 1
                 }
-                {($_ -eq "Build") -or ($_ -eq "Patch")} {
-                    $semver.Patch = $semver.Path + 1
+                'Patch' {
+                    $semver.Patch = $semver.Patch + 1
                     $semver.BuildRevision = $semver.BuildRevision + 1
+                }
+                'None' {
+                    # Turns Off All Version Updates
                 }
                 Default {
                     $semver.BuildRevision = $semver.BuildRevision + 1
                 }
             }
-            
-            # Update the module manifest
-            $project.Value.Manifest | 
-            Add-Member -MemberType NoteProperty -Name 'Version' -Value ($semver.ToMSVersion()) -Force
+            # Update the Tag to make sure we grab any change
+            $semver.PreReleaseTag = $project.Value.Cfg.PreReleaseTag
+
             $project.Value.LockInfo |
             Add-Member -MemberType NoteProperty -Name 'Version' -Value "$semver" -Force
             $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version to Manifest: $semver")

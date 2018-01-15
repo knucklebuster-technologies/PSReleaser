@@ -1,5 +1,5 @@
 # Import Dependancies
-Get-ChildItem -Path "$PSScriptRoot\modules\*ps1" | ForEach-Object {
+Get-ChildItem -Path "$PSScriptRoot\modules" | ForEach-Object {
     Import-Module $PSItem.FullName -Force -Global
 }
 
