@@ -20,42 +20,37 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             
             # Get the current module version
             $mver = [version]::Parse("$($project.Value.Manifest.Version)")
-            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from Manifest $mver")
+            $semver = New-SemanticVersion -Major $mver.Major -Minor $mver.Minor -Patch $mver.Build -BuildRevision $mver.Revision -PrereleaseTag $project.Value.Cfg.PrereleaseTag
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from Manifest $semver")
 
-            # Get the parts of the version
-            $Major, $Minor, $Build, $Revision = $mver.Major, $mver.Minor, $mver.Build, $mver.Revision
-            
             # Increment the parts of the version
-            switch ($project.Value.Cfg.ReleaseType) {
+            switch ($project.Value.Cfg.BuildType) {
                 'Major' {
-                    $Major = $mver.Major + 1
-                    $Minor = 0
-                    $Build = 0
-                    $Revision = 1
+                    $semver.Major = $semver.Major + 1
+                    $semver.Minor = 0
+                    $semver.Patch = 0
+                    $semver.BuildRevision = 1
                 }
                 'Minor' {
-                    $Minor = $mver.Minor + 1
-                    $Build = 0
-                    $Revision = 1
+                    $semver.Minor = $semver.Minor + 1
+                    $semver.Patch = 0
+                    $semver.BuildRevision = $semver.BuildRevision + 1
                 }
                 {($_ -eq "Build") -or ($_ -eq "Patch")} {
-                    $Build = $mver.Build + 1
-                    $Revision = $mver.Revision + 1
+                    $semver.Patch = $semver.Path + 1
+                    $semver.BuildRevision = $semver.BuildRevision + 1
                 }
                 Default {
-                    $Revision = $mver.Revision + 1
+                    $semver.BuildRevision = $semver.BuildRevision + 1
                 }
             }
             
-            # Put together part of the version
-            $mver = [version] "$Major.$Minor.$Build.$Revision"
-
             # Update the module manifest
             $project.Value.Manifest | 
-            Add-Member -MemberType NoteProperty -Name 'Version' -Value $mver -Force
+            Add-Member -MemberType NoteProperty -Name 'Version' -Value ($semver.ToMSVersion()) -Force
             $project.Value.LockInfo |
-            Add-Member -MemberType NoteProperty -Name 'Version' -Value "$mver" -Force
-            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version to Manifest: $mver")
+            Add-Member -MemberType NoteProperty -Name 'Version' -Value "$semver" -Force
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version to Manifest: $semver")
             $true
         }
         catch {

@@ -1,5 +1,7 @@
 # Import Dependancies
-Import-Module "$PSScriptRoot\modules\PSSemanticVersion" -Force -Scope Local
+Get-ChildItem -Path "$PSScriptRoot\modules\*ps1" | ForEach-Object {
+    Import-Module $PSItem.FullName -Force -Global
+}
 
 # Load and Export Vars
 Get-ChildItem -Path "$PSScriptRoot\vars\*ps1" | ForEach-Object {
