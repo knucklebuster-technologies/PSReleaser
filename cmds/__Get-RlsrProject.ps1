@@ -3,7 +3,7 @@
 function Get-RlsrProject {
     [CmdletBinding()]
     param ()
-    
+
     end {
         try {
             $ErrorActionPreference = 'Stop'
@@ -24,12 +24,12 @@ function Get-RlsrProject {
                     [ValidateSet('INFO', 'WARN', 'ERROR', 'FATAL', 'DEBUG', 'VERBOSE')]
                     [string]
                     $Level,
-                
+
                     [Parameter(Mandatory, HelpMessage = 'Context is the name (Id) of the script, block, function, or variable generating the entry')]
                     [ValidateNotNullOrEmpty()]
                     [string]
                     $Context,
-        
+
                     [Parameter(Mandatory, HelpMessage = 'Description of a specific tasks event')]
                     [ValidateNotNullOrEmpty()]
                     [string]
@@ -37,15 +37,22 @@ function Get-RlsrProject {
                 )
                 $LogEntry = New-RlsrLogEntry -Level $Level -RunName $this.RunName -Context $Context -Message $Message
                 $this.LogEntries += $LogEntry
-                $LogEntry.ToString() | Write-Host -ForegroundColor Blue
+                switch ($Level) {
+                    'INFO'    { $LogEntry.ToString() | Write-Host }
+                    'WARN'    { $LogEntry.ToString() | Write-Host -ForegroundColor Yellow }
+                    'ERROR'   { $LogEntry.ToString() | Write-Host -ForegroundColor Red }
+                    'DEBUG'   { $LogEntry.ToString() | Write-Host -ForegroundColor Green }
+                    'VERBOSE' { $LogEntry.ToString() | Write-Host -ForegroundColor Blue }
+                    Default   { $LogEntry.ToString() | Write-Host -ForegroundColor Magenta }
+                }
             } -Force -PassThru
             Write-Verbose -Message "The project obj was created"
         }
         catch {
             Write-Error @{
-                'Message'  = "The project obj $prjpath does not exist" 
+                'Message'  = "The project obj $prjpath does not exist"
                 'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'Get-RlsrProject' 
+                'ErrorID'  = 'Get-RlsrProject'
             }
         }
     }
