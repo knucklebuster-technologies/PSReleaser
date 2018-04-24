@@ -1,0 +1,13 @@
+{
+    "moduleName": "PSReleaser",
+    "sourcePath": ".",
+    "releasePath": "..\releases",
+    "buildType": "None",
+    "prereleaseTag": "alpha.1",
+    "taskSequence": [
+        "InvokePester",
+        "UpdateVersion",
+        "GitAddAll",
+        "ArchiveModule"
+    ]
+}
