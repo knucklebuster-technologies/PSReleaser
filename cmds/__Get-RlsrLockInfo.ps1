@@ -13,20 +13,21 @@ function Get-RlsrLockInfo {
         [string]
         $CfgPath
     )
-    
+
     end {
         try {
             $ErrorActionPreference = 'Stop'
-            $lckpath = Join-Path -Path $Path -ChildPath "rlsrcr1.lock.json"
+            $lckpath = $CfgPath -replace ".rlsrcr1.json", ".lock.json"
             $lckinfo = Get-Content -Path $lckpath -Force | ConvertFrom-Json
-            $lckinfo."$CfgPath"
+            $lckinfo | Add-Member -MemberType NoteProperty -Name 'cfgPath' -Value $CfgPath -Force
+            $lckinfo
             Write-Verbose -Message "The lock file $lckpath was imported"
         }
         catch {
             Write-Error - @{
-                'Message'  = "The project cfg $lckpath does not exist" 
+                'Message'  = "The project cfg $lckpath does not exist"
                 'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'Get-RlsrConfig' 
+                'ErrorID'  = 'Get-RlsrConfig'
             }
         }
     }

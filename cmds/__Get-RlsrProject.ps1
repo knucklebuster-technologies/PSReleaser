@@ -12,9 +12,9 @@ function Get-RlsrProject {
                 RunName    = 'null::20173112011045'
                 Status     = 'New'
                 Running    = 'False'
-                Cfg        = @{}
+                Cfg        = New-Object 'PSCustomObject'
                 Manifest   = @{}
-                LockInfo   = @{}
+                LockInfo   = New-Object 'PSCustomObject'
                 Completed  = @()
                 LogEntries = @()
             } |
