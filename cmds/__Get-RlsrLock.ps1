@@ -18,9 +18,12 @@ function Get-RlsrLock {
         try {
             $ErrorActionPreference = 'Stop'
             $lckpath = $CfgPath -replace ".rlsr.cfg", ".rlsr.lock"
-            $lckinfo = Get-Content -Path $lckpath -Force | ConvertFrom-Json
-            $lckinfo | Add-Member -MemberType NoteProperty -Name 'cfgPath' -Value $CfgPath -Force
-            $lckinfo
+            if (Test-Path -Path $lckpath) {
+                Get-Content -Path $lckpath -Force | ConvertFrom-Json
+            } else {
+                '{}' | Out-File -FilePath $lckpath -Force
+                New-Object -TypeName 'PSCustomObject'
+            }
             Write-Verbose -Message "The lock file $lckpath was imported"
         }
         catch {
