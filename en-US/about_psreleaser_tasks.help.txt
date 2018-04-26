@@ -8,8 +8,8 @@ LONG DESCRIPTION
     PSReleaser is a Continous Integration / Release system designed for powershell
     modules. It includes a pluggable task system. Common Tasks are included such as
     Versioning, Git Commits, Build Assembly, and Zipped Archiving. A Releaser project
-    contains a project file *.rlsrcr1.psd1 at the root of the module directory. Also 
-    rlsrcr1.lock.json will be present after the first run of the engine against this
+    contains a project file *.rlsrcr1.psd1 at the root of the module directory. Also
+    rlsr.lock will be present after the first run of the engine against this
     project.
 
 EXAMPLES

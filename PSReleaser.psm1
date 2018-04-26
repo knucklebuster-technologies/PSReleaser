@@ -19,7 +19,7 @@ Get-ChildItem -Path "$PSScriptRoot\cmds\*ps1" | ForEach-Object {
 $RlsrInfo.RootPath = $PSScriptRoot
 
 # Load Tasks
-Get-ChildItem -Path "$PSScriptRoot\tasks" | ForEach-Object {
+Get-ChildItem -Path "$PSScriptRoot\tasks\*ps1" | ForEach-Object {
     $RTasks = . $PSItem.FullName
     $RlsrInfo.Tasks[$RTasks.Name] = $RTasks
 }

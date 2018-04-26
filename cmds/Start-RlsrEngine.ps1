@@ -17,10 +17,10 @@ function Start-RlsrEngine {
         $p.Cfg = Get-RlsrConfig -Path $Path -Name $Name
         $p.RunName = $p.Cfg.ModuleName + '::' + $p.Timestamp
         $p.Manifest = Test-ModuleManifest -Path "$Path\$($p.Cfg.ModuleName).psd1"
-        $p.LockInfo = Get-RlsrLockInfo -Path $Path -CfgPath $p.Cfg.FullPath
+        $p.LockInfo = Get-RlsrLock -Path $Path -CfgPath $p.Cfg.FullPath
         $p.Status = 'Running'
         $p.Running = $true
-        
+
         Write-Verbose -Message "Engine Starting: RUN $($p.RunName) For Module $($p.Cfg.ModuleName) CI process started"
         $p.Cfg.TaskSequence | ForEach-Object {
             $taskname = "$PSItem"
@@ -34,10 +34,8 @@ function Start-RlsrEngine {
             }
             else {
                 $p.Status = 'Failed'
-            }  
+            }
         }
-
-        Set-RlsrLockInfo -Path $Path -CfgPath $p.Cfg.FullPath -InputObject $p.LockInfo
         $RlsrInfo.Projects += $p
     }
 }

@@ -21,4 +21,4 @@ TestResult.xml
 # PSReleaser
 restic/
 backup.cmd
-rlsrcr1.lock.json
+*.rlsr.lock

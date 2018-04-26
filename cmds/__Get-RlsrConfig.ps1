@@ -20,11 +20,11 @@ function Get-RlsrConfig {
         try {
             Write-Verbose -Message "Path: $Path Name: $Name"
             $Path = Resolve-Path -Path $Path
-            $FullPath = "$Path\$Name.rlsrcr1.json"
+            $FullPath = "$Path\$Name.rlsr.cfg"
             Write-Verbose -Message "FullPath: $FullPath"
             $cfgpath = Get-ChildItem -Path $FullPath  | Select-Object -First 1
             $cfgobject = Get-Content -Path $cfgpath | ConvertFrom-Json
-            $cfgobject | Add-Member -MemberType NoteProperty -Name 'fullPath' -Value $FullPath -Force
+            $cfgobject | Add-Member -MemberType NoteProperty -Name 'fullPath' -Value $cfgpath -Force
             $cfgobject
             Write-Verbose -Message "The project cfg $cfgpath was imported"
         }

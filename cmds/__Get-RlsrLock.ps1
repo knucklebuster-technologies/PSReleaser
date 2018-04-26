@@ -1,6 +1,6 @@
 
 
-function Get-RlsrLockInfo {
+function Get-RlsrLock {
     [CmdletBinding()]
     param (
         [Parameter(HelpMessage = 'Path to directory that contains Rlsr project config(s)')]
@@ -17,7 +17,7 @@ function Get-RlsrLockInfo {
     end {
         try {
             $ErrorActionPreference = 'Stop'
-            $lckpath = $CfgPath -replace ".rlsrcr1.json", ".lock.json"
+            $lckpath = $CfgPath -replace ".rlsr.cfg", ".rlsr.lock"
             $lckinfo = Get-Content -Path $lckpath -Force | ConvertFrom-Json
             $lckinfo | Add-Member -MemberType NoteProperty -Name 'cfgPath' -Value $CfgPath -Force
             $lckinfo
