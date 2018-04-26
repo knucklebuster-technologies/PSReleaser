@@ -18,19 +18,14 @@ function Get-RlsrLock {
         try {
             $ErrorActionPreference = 'Stop'
             $lckpath = $CfgPath -replace ".rlsr.cfg", ".rlsr.lock"
-            if (Test-Path -Path $lckpath) {
-                Get-Content -Path $lckpath -Force | ConvertFrom-Json
-            } else {
-                '{}' | Out-File -FilePath $lckpath -Force
-                New-Object -TypeName 'PSCustomObject'
-            }
+            Get-Content -Path $lckpath -Force | ConvertFrom-Json
             Write-Verbose -Message "The lock file $lckpath was imported"
         }
         catch {
             Write-Error - @{
-                'Message'  = "The project cfg $lckpath does not exist"
+                'Message'  = "The lock file $lckpath was not imported"
                 'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'Get-RlsrConfig'
+                'ErrorID'  = 'Get-RlsrLock'
             }
         }
     }
