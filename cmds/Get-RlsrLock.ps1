@@ -16,7 +16,7 @@ function Get-RlsrLock {
             Write-Verbose -Message "The lock file $lckpath was imported"
         }
         catch {
-            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

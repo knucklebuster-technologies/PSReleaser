@@ -49,7 +49,7 @@ function Get-RlsrProject {
             Write-Verbose -Message "The project obj was created"
         }
         catch {
-            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

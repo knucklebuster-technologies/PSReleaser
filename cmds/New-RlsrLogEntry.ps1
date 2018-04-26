@@ -50,7 +50,7 @@ function New-RlsrLogEntry {
             } -Force -PassThru
         }
         catch {
-            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

@@ -19,15 +19,15 @@ function New-RlsrProject {
             }
 
             $cfgpath = "$Path\$Name.rlsr.cfg"
-            $cfgexample = "$($RlsrInfo.EnginePath)\examples\example.rlsr.cfg"
+            $cfgexample = "$($RlsrEngine.RootPath)\examples\example.rlsr.cfg"
             Copy-Item -Path $cfgexample -Destination $cfgpath
 
             $lckpath = "$Path\$Name.rlsr.lock"
-            $lckexample = "$($RlsrInfo.EnginePath)\examples\example.rlsr.lock"
+            $lckexample = "$($RlsrEngine.RootPath)\examples\example.rlsr.lock"
             Copy-Item -Path $lckexample -Destination $lckpath
         }
         catch {
-            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

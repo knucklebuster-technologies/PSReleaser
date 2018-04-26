@@ -30,7 +30,7 @@ function Start-RlsrEngine {
         $p.Cfg.TaskSequence | ForEach-Object {
             $taskname = "$PSItem"
             Write-Verbose -Message "Task Invocation: $taskname invoked"
-            $ok = $RlsrInfo.Tasks[$taskname].InvokeTask(([ref]$p))
+            $ok = $RlsrEngine.Tasks[$taskname].InvokeTask(([ref]$p))
             $p.Running = $false
 
             if ($ok -eq $true) {
@@ -41,6 +41,6 @@ function Start-RlsrEngine {
                 $p.Status = 'Failed'
             }
         }
-        $RlsrInfo.Projects += $p
+        $RlsrEngine.Projects += $p
     }
 }

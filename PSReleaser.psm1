@@ -16,10 +16,10 @@ Get-ChildItem -Path "$PSScriptRoot\cmds\*ps1" | ForEach-Object {
 }
 
 # Set Var Properties
-$RlsrInfo.EnginePath = $PSScriptRoot
+$RlsrEngine.RootPath = $PSScriptRoot
 
 # Load Tasks
 Get-ChildItem -Path "$PSScriptRoot\tasks\*ps1" | ForEach-Object {
     $RTasks = . $PSItem.FullName
-    $RlsrInfo.Tasks[$RTasks.Name] = $RTasks
+    $RlsrEngine.Tasks[$RTasks.Name] = $RTasks
 }
