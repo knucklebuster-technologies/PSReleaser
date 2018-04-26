@@ -3,15 +3,11 @@
 function Get-RlsrConfig {
     [CmdletBinding()]
     param (
-        [Parameter(HelpMessage = 'Path to directory that contains Rlsr project config(s)')]
-        [ValidateScript( {
-                if ([IO.directory]::Exists($PSItem)) {return $true}
-                throw "$PSItem is not a vaild directory"
-            })]
+        [Parameter(HelpMessage = 'The path to directory that contains the projects rlsr.cfg file(s)')]
         [string]
         $Path = "$Pwd",
 
-        [Parameter(HelpMessage = 'The base name of the Rlsr poject config')]
+        [Parameter(HelpMessage = 'The base name of the projects rlsr.cfg file')]
         [string]
         $Name = "*"
     )
@@ -29,11 +25,8 @@ function Get-RlsrConfig {
             Write-Verbose -Message "The project cfg $cfgpath was imported"
         }
         catch {
-            Write-Error - @{
-                'Message'  = "The project cfg $cfgpath was not imported: $_"
-                'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'Get-RlsrConfig'
-            }
+            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            throw $_
         }
     }
 }

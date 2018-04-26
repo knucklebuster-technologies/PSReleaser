@@ -20,11 +20,8 @@ function Update-RlsrLock {
             Write-Verbose -Message "Lock update successful"
         }
         catch {
-            Write-Error - @{
-                'Message'  = "Lock update failed"
-                'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'Update-RlsrLock'
-            }
+            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            throw $_
         }
     }
 }

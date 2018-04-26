@@ -27,24 +27,31 @@ function New-RlsrLogEntry {
         [string]
         $Message
     )
-    
+
     end {
-        [PSCustomObject] @{
-            Timestamp = $Timestamp
-            Level     = $Level
-            RunName   = $RunName
-            Context   = $Context
-            Message   = $Message
-        } |
-        Add-Member -MemberType ScriptMethod -Name ToString -Value {
-            [string]::Join(
-                '||',
-                $this.Timestamp,
-                $this.Level,
-                $this.RunName,
-                $this.Context, 
-                $this.Message
-            )
-        } -Force -PassThru
+        try {
+            $ErrorActionPreference = 'Stop'
+            [PSCustomObject] @{
+                Timestamp = $Timestamp
+                Level     = $Level
+                RunName   = $RunName
+                Context   = $Context
+                Message   = $Message
+            } |
+            Add-Member -MemberType ScriptMethod -Name ToString -Value {
+                [string]::Join(
+                    '||',
+                    $this.Timestamp,
+                    $this.Level,
+                    $this.RunName,
+                    $this.Context,
+                    $this.Message
+                )
+            } -Force -PassThru
+        }
+        catch {
+            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            throw $_
+        }
     }
 }

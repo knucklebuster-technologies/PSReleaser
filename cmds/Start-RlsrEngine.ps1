@@ -3,7 +3,12 @@
 function Start-RlsrEngine {
     [CmdletBinding()]
     param (
+        [Parameter(HelpMessage="The path to the directory containg the rlsr project files")]
+        [string]
         $Path = "$Pwd",
+
+        [Parameter(HelpMessage="The base name of the rlsr project files to use")]
+        [string]
         $Name = '*'
     )
 
@@ -17,7 +22,7 @@ function Start-RlsrEngine {
         $p.Cfg = Get-RlsrConfig -Path $Path -Name $Name
         $p.RunName = $p.Cfg.ModuleName + '::' + $p.Timestamp
         $p.Manifest = Test-ModuleManifest -Path "$Path\$($p.Cfg.ModuleName).psd1"
-        $p.LockInfo = Get-RlsrLock -Path $Path -CfgPath $p.Cfg.FullPath
+        $p.LockInfo = Get-RlsrLock -CfgPath $p.Cfg.FullPath
         $p.Status = 'Running'
         $p.Running = $true
 

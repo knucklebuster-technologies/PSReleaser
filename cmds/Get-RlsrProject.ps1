@@ -12,9 +12,9 @@ function Get-RlsrProject {
                 RunName    = 'null::20173112011045'
                 Status     = 'New'
                 Running    = 'False'
-                Cfg        = New-Object 'PSCustomObject'
+                Cfg        = New-Object -TypeName 'PSCustomObject'
                 Manifest   = @{}
-                LockInfo   = New-Object 'PSCustomObject'
+                LockInfo   = New-Object -TypeName 'PSCustomObject'
                 Completed  = @()
                 LogEntries = @()
             } |
@@ -49,11 +49,8 @@ function Get-RlsrProject {
             Write-Verbose -Message "The project obj was created"
         }
         catch {
-            Write-Error @{
-                'Message'  = "The project obj $prjpath does not exist"
-                'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'Get-RlsrProject'
-            }
+            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            throw $_
         }
     }
 }

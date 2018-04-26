@@ -1,7 +1,12 @@
 function New-RlsrProject {
     [CmdletBinding()]
     param (
+        [Parameter(HelpMessage="The path to the directory to create the new project items")]
+        [string]
         $Path,
+
+        [Parameter(HelpMessage="The base name for the new projects items")]
+        [string]
         $Name
     )
 
@@ -14,19 +19,16 @@ function New-RlsrProject {
             }
 
             $cfgpath = "$Path\$Name.rlsr.cfg"
-            $cfgexample = "$($RlsrInfo.RootPath)\examples\example.rlsr.cfg"
+            $cfgexample = "$($RlsrInfo.EnginePath)\examples\example.rlsr.cfg"
             Copy-Item -Path $cfgexample -Destination $cfgpath
 
             $lckpath = "$Path\$Name.rlsr.lock"
-            $lckexample = "$($RlsrInfo.RootPath)\examples\example.rlsr.lock"
+            $lckexample = "$($RlsrInfo.EnginePath)\examples\example.rlsr.lock"
             Copy-Item -Path $lckexample -Destination $lckpath
         }
         catch {
-            Write-Error - @{
-                'Message'  = "The project .cfg and .lock files were not created: $_"
-                'Catagory' = 'ObjectNotFound'
-                'ErrorID'  = 'New-RlsrFiles'
-            }
+            $RlsrInfo.EngineErrors += ConvertFrom-ErrorRecord -Record $_
+            throw $_
         }
     }
 }

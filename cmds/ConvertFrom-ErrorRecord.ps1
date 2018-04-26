@@ -1,8 +1,6 @@
-function ConvertFrom-ErrorRecord
-{
+function ConvertFrom-ErrorRecord {
   [CmdletBinding(DefaultParameterSetName="ErrorRecord")]
-  param
-  (
+  param (
     [Management.Automation.ErrorRecord]
     [Parameter(Mandatory,ValueFromPipeline,ParameterSetName="ErrorRecord", Position=0)]
     $Record,
@@ -12,10 +10,8 @@ function ConvertFrom-ErrorRecord
     $Alien
   )
 
-  process
-  {
-    if ($PSCmdlet.ParameterSetName -eq 'ErrorRecord')
-    {
+  process {
+    if ($PSCmdlet.ParameterSetName -eq 'ErrorRecord') {
       [PSCustomObject]@{
         Exception = $Record.Exception.Message
         Reason    = $Record.CategoryInfo.Reason
@@ -23,10 +19,16 @@ function ConvertFrom-ErrorRecord
         Script    = $Record.InvocationInfo.ScriptName
         Line      = $Record.InvocationInfo.ScriptLineNumber
         Column    = $Record.InvocationInfo.OffsetInLine
-      }
+      } |
+      Add-Member -MemberType ScriptMethod -Name 'ToString' -Value { @"
+[Exception]:$($this.Exception)
+[Reason]:$($this.Reason)
+[Script]:$($this.Script)
+[Line]:$($this.Line)
+[Column]:$($this.Column)
+"@ } -Force -PassThru
     }
-    else
-    {
+    else {
       Write-Warning "$Alien"
     }
   }

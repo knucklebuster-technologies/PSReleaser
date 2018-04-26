@@ -1,5 +1,6 @@
 $RlsrInfo = [PSCustomObject] @{
-    RootPath = "$PWD"
+    EnginePath = "$PWD"
     Tasks    = @{}
     Projects = @()
+    EngineErrors = @()
 }
