@@ -1,6 +1,7 @@
 $RlsrEngine = [PSCustomObject] @{
-    RootPath  = "$PWD"
+    RootPath  = ""
     Tasks     = @{}
     Projects  = @()
     ErrorInfo = @()
 }
+$RlsrEngine.RootPath = "$( Split-Path -Path $PSScriptRoot -Parent )"

@@ -15,9 +15,6 @@ Get-ChildItem -Path "$PSScriptRoot\cmds\*ps1" | ForEach-Object {
     Export-ModuleMember -Function $PSItem.BaseName
 }
 
-# Set Var Properties
-$RlsrEngine.RootPath = $PSScriptRoot
-
 # Load Tasks
 Get-ChildItem -Path "$PSScriptRoot\tasks\*ps1" | ForEach-Object {
     $RTasks = . $PSItem.FullName
