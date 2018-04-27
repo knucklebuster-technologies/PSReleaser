@@ -7,10 +7,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     [bool]$Public = $true
     [string[]]$Inputs = @('LockInfo.Name', 'LockInfo.Version', 'Cfg.FullPath', 'Cfg.ReleasePath')
     [string[]]$Outputs = @()
-    [string]$Description = @"
-    ArchiveModule task perform the action of assembling the module
-    into a specified location and then is compressed into a zipped archive
-"@
+    [string]$Description = "Assembles the module and creates a zipped archive"
     function InvokeTask {
         [CmdletBinding()]
         Param (
@@ -35,12 +32,12 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
 
             # releaser source path
             $src = Join-Path -Path $PWD -ChildPath $project.Value.Cfg.SourcePath
-            
-            
+
+
             # Module destination path
             $dest = Join-Path -Path $PWD -ChildPath $project.Value.Cfg.ReleasePath
             $mdest = "$dest\$mvf\$mn"
-            
+
 
             # copy the module
             Copy-Item -Path $src -Destination $mdest -Recurse -Force
@@ -62,8 +59,8 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     }
 
     Export-ModuleMember -Variable @(
-        'Name', 
-        'Public', 
+        'Name',
+        'Public',
         'Description'
         'Inputs'
         'Outputs'

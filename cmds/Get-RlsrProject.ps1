@@ -1,5 +1,14 @@
 
-
+<#
+.SYNOPSIS
+    Returns an object used for project based data.
+.DESCRIPTION
+    Returns an object used for project based data.
+.EXAMPLE
+    PS C:\> Get-RlsrProject
+    Returns an object used to hold all project
+    related data.
+#>
 function Get-RlsrProject {
     [CmdletBinding()]
     param ()

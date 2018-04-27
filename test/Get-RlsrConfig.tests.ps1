@@ -1,6 +1,6 @@
 ﻿$moddir = Split-Path -Path $PSScriptRoot -Parent
 $cmddir = Join-Path  -Path $moddir -ChildPath 'cmds'
-. "$cmddir\__Get-RlsrConfig.ps1"
+. "$cmddir\Get-RlsrConfig.ps1"
 
 Describe "Get-RlsrConfig" {
     $prjfile = 'alpha-patch'
