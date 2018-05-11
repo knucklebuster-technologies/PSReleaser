@@ -5,7 +5,7 @@
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     [string]$Name = $([IO.FileInfo]"$PSCommandPath").BaseName
     [bool]$Public = $true
-    [string[]]$Inputs = @('LockInfo.Name', 'LockInfo.Version', 'Cfg.FullPath', 'Cfg.ReleasePath')
+    [string[]]$Inputs = @('Lock.Name', 'Lock.Version', 'Cfg.FullPath', 'Cfg.ReleasePath')
     [string[]]$Outputs = @()
     [string]$Description = "Assembles the module and creates a zipped archive"
     function InvokeTask {

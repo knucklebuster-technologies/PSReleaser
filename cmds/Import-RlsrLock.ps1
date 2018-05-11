@@ -12,12 +12,12 @@
     The full path to the rlsr.cfg file used to start
     the current run.
 .EXAMPLE
-    PS C:\> Get-RlsrLock -CfgPath C:\Module\Source\Alpha-Path.rlsr.cfg
+    PS C:\> Import-RlsrLock -CfgPath C:\Module\Source\Alpha-Path.rlsr.cfg
     This cmd will take the CfgPath change the .cfg to .lock
     and then retrun and object based on the json stored in the
     rlsr.lock file.
 #>
-function Get-RlsrLock {
+function Import-RlsrLock {
     [CmdletBinding()]
     param (
         [Parameter(HelpMessage = 'The path to the rlsr.cfg file being used by the current process')]
@@ -33,7 +33,7 @@ function Get-RlsrLock {
             Write-Verbose -Message "The lock file $lckpath was imported"
         }
         catch {
-            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.Errors += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

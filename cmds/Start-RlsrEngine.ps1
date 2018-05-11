@@ -17,12 +17,12 @@ function Start-RlsrEngine {
         Write-Verbose -Message "Engine Values: Path=$Path, Name=$Name"
         $Path = Resolve-Path -Path $Path
         Write-Verbose -Message "Directory Path: $Path"
-        $p = Get-RlsrProject
-        $p.Timestamp = [DateTime]::NoW.ToString('yyyyMMddHHmmss')
-        $p.Cfg = Get-RlsrConfig -Path $Path -Name $Name
-        $p.RunName = $p.Cfg.ModuleName + '::' + $p.Timestamp
+        $p = New-RlsrProject
+        $p.Cfg = Import-RlsrCfgFile -Path $Path -Name $Name
+        $p.Lock = Import-RlsrLock -CfgPath $p.Cfg.FullPath
         $p.Manifest = Test-ModuleManifest -Path "$Path\$($p.Cfg.ModuleName).psd1"
-        $p.LockInfo = Get-RlsrLock -CfgPath $p.Cfg.FullPath
+        $p.Timestamp = [DateTime]::NoW.ToString('yyyyMMddHHmmss')
+        $p.RunName = $p.Cfg.ModuleName + '::' + $p.Timestamp
         $p.Status = 'Running'
         $p.Running = $true
 

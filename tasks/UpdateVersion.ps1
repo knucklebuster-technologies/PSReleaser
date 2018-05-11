@@ -1,8 +1,8 @@
 New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     [string]$Name = $([IO.FileInfo]"$PSCommandPath").BaseName
     [bool]$Public = $true
-    [string[]]$Inputs = @('LockInfo.Version', 'Cfg.BuildType', 'Cfg.PreReleaseTag')
-    [string[]]$Outputs = @('LockInfo.Version')
+    [string[]]$Inputs = @('Lock.Version', 'Cfg.BuildType', 'Cfg.PreReleaseTag')
+    [string[]]$Outputs = @('Lock.Version')
     [string]$Description = 'Create a unique version for the project release'
     function InvokeTask {
         Param (
@@ -12,8 +12,8 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Starting Task')
         try {
             $ErrorActionPreference = 'Stop'
-            
-            $semver = $(New-SemanticVersion).Parse($project.Value.LockInfo.Version)
+
+            $semver = $(New-SemanticVersion).Parse($project.Value.Lock.Version)
             $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from LockFile $semver")
 
             # Increment the parts of the version
@@ -43,7 +43,7 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
             # Update the Tag to make sure we grab any change
             $semver.PreReleaseTag = $project.Value.Cfg.PreReleaseTag
 
-            $project.Value.LockInfo |
+            $project.Value.Lock |
             Add-Member -MemberType NoteProperty -Name 'Version' -Value "$semver" -Force
             $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version to Manifest: $semver")
             $true
@@ -55,8 +55,8 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
     }
 
     Export-ModuleMember -Variable @(
-        'Name', 
-        'Public', 
+        'Name',
+        'Public',
         'Description'
         'Inputs'
         'Outputs'

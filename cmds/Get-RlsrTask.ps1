@@ -8,10 +8,10 @@
     of the task, Description of the task, and Inputs used
     by the task.
 .EXAMPLE
-    PS C:\> Get-RlsrTaskInfo
+    PS C:\> Get-RlsrTask
     Displays a list of task names, descriptions, and inputs
 #>
-function Get-RlsrTaskInfo {
+function Get-RlsrTask {
     [CmdletBinding()]
     param ()
 

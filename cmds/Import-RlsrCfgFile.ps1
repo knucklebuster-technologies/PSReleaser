@@ -14,11 +14,11 @@
     The base file name shared by the rlser.cfg, rlsr.lock file.
     Do not specify the file extension.
 .EXAMPLE
-    PS C:\> Get-RlsrConfig -Path 'C:\Modules\Source' -Name 'Alpha-Patch'
+    PS C:\> Import-RlsrCfgFile -Path 'C:\Modules\Source' -Name 'Alpha-Patch'
     This looks for the json cfg file C:\Modules\Source\Alpha-Patch.rlsr.cfg.
     If the file is found it returns a object from the files json.
 #>
-function Get-RlsrConfig {
+function Import-RlsrCfgFile {
     [CmdletBinding()]
     param (
         [Parameter(HelpMessage = 'The path to directory that contains the modules source and rlsr.cfg file(s)')]
@@ -44,7 +44,7 @@ function Get-RlsrConfig {
             Write-Verbose -Message "The project cfg $cfgpath was imported"
         }
         catch {
-            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.Errors += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

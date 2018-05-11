@@ -1,33 +1,64 @@
+
+<#
+.SYNOPSIS
+    Returns an object used for project based data.
+.DESCRIPTION
+    Returns an object used for project based data.
+.EXAMPLE
+    PS C:\> New-RlsrProject
+    Returns an object used to hold all project
+    related data.
+#>
 function New-RlsrProject {
     [CmdletBinding()]
-    param (
-        [Parameter(HelpMessage="The path to the directory to create the new project items")]
-        [string]
-        $Path,
-
-        [Parameter(HelpMessage="The base name for the new projects items")]
-        [string]
-        $Name
-    )
+    param ()
 
     end {
         try {
             $ErrorActionPreference = 'Stop'
-            $Path = (Resolve-Path -Path $Path).Path
-            if ([System.IO.Directory]::Exists($Path) -eq $false) {
-                throw "The parameter Path is not a directory"
-            }
+            [PSCustomObject] @{
+                Timestamp  = '20173112013555'
+                RunName    = 'null::20173112011045'
+                Status     = 'New'
+                Running    = 'False'
+                Cfg        = New-Object -TypeName 'PSCustomObject'
+                Manifest   = @{}
+                Lock   = New-Object -TypeName 'PSCustomObject'
+                Completed  = @()
+                LogEntries = @()
+            } |
+            Add-Member -MemberType ScriptMethod -Name Log -Value {
+                Param (
+                    [Parameter(Mandatory, HelpMessage = 'The log entries serverity level')]
+                    [ValidateSet('INFO', 'WARN', 'ERROR', 'FATAL', 'DEBUG', 'VERBOSE')]
+                    [string]
+                    $Level,
 
-            $cfgpath = "$Path\$Name.rlsr.cfg"
-            $cfgexample = "$($RlsrEngine.RootPath)\examples\example.rlsr.cfg"
-            Copy-Item -Path $cfgexample -Destination $cfgpath
+                    [Parameter(Mandatory, HelpMessage = 'Context is the name (Id) of the script, block, function, or variable generating the entry')]
+                    [ValidateNotNullOrEmpty()]
+                    [string]
+                    $Context,
 
-            $lckpath = "$Path\$Name.rlsr.lock"
-            $lckexample = "$($RlsrEngine.RootPath)\examples\example.rlsr.lock"
-            Copy-Item -Path $lckexample -Destination $lckpath
+                    [Parameter(Mandatory, HelpMessage = 'Description of a specific tasks event')]
+                    [ValidateNotNullOrEmpty()]
+                    [string]
+                    $Message
+                )
+                $LogEntry = New-RlsrLogEntry -Level $Level -RunName $this.RunName -Context $Context -Message $Message
+                $this.LogEntries += $LogEntry
+                switch ($Level) {
+                    'INFO'    { $LogEntry.ToString() | Write-Host }
+                    'WARN'    { $LogEntry.ToString() | Write-Host -ForegroundColor Yellow }
+                    'ERROR'   { $LogEntry.ToString() | Write-Host -ForegroundColor Red }
+                    'DEBUG'   { $LogEntry.ToString() | Write-Host -ForegroundColor Green }
+                    'VERBOSE' { $LogEntry.ToString() | Write-Host -ForegroundColor Blue }
+                    Default   { $LogEntry.ToString() | Write-Host -ForegroundColor Magenta }
+                }
+            } -Force -PassThru
+            Write-Verbose -Message "The project obj was created"
         }
         catch {
-            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.Errors += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }

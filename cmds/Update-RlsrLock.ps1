@@ -14,13 +14,13 @@ function Update-RlsrLock {
     end {
         try {
             $ErrorActionPreference = 'Stop'
-            $RlsrEngine.Projects[-1].LockInfo | Add-Member -MemberType NoteProperty -Name $Name -Value $Value -Force
+            $RlsrEngine.Projects[-1].Lock | Add-Member -MemberType NoteProperty -Name $Name -Value $Value -Force
             $lckpath = $RlsrEngine.Projects[-1].Cfg.fullPath -replace ".rlsr.cfg", ".rlsr.lock"
-            $RlsrEngine.Projects[-1].LockInfo | ConvertTo-Json | Set-Content -Path $lckpath -Force
+            $RlsrEngine.Projects[-1].Lock | ConvertTo-Json | Set-Content -Path $lckpath -Force
             Write-Verbose -Message "Lock update successful"
         }
         catch {
-            $RlsrEngine.ErrorInfo += ConvertFrom-ErrorRecord -Record $_
+            $RlsrEngine.Errors += ConvertFrom-ErrorRecord -Record $_
             throw $_
         }
     }
