@@ -12,9 +12,13 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
         $project.Value.Log('INFO', 'TASK: ' + $this.Name, 'Starting Task')
         try {
             $ErrorActionPreference = 'Stop'
+            $PRoot = Split-Path -Path $project.Value.Cfg.FullPath -Parent
+            $PSD1 = $project.Value.Cfg.ModuleName + '.psd1'
+            $ModPath = Join-Path -Path $PRoot -ChildPath $PSD1
 
-            $semver = $(New-SemanticVersion).Parse($project.Value.Lock.Version)
-            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version from LockFile $semver")
+            $semver = New-SemanticVersion
+            $semver.FromVersionJson($PRoot) | Out-Null
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Starting Version $semver")
 
             # Increment the parts of the version
             switch ($project.Value.Cfg.BuildType) {
@@ -22,30 +26,30 @@ New-Module -Name $([IO.FileInfo]"$PSCommandPath").BaseName -ScriptBlock {
                     $semver.Major = $semver.Major + 1
                     $semver.Minor = 0
                     $semver.Patch = 0
-                    $semver.BuildRevision = 1
+                    $semver.Build = 1
                 }
                 'Minor' {
                     $semver.Minor = $semver.Minor + 1
                     $semver.Patch = 0
-                    $semver.BuildRevision = $semver.BuildRevision + 1
+                    $semver.Build = $semver.Build + 1
                 }
                 'Patch' {
                     $semver.Patch = $semver.Patch + 1
-                    $semver.BuildRevision = $semver.BuildRevision + 1
+                    $semver.Build = $semver.Build + 1
                 }
                 'None' {
                     # Turns Off All Version Updates
                 }
                 Default {
-                    $semver.BuildRevision = $semver.BuildRevision + 1
+                    $semver.Build = $semver.Build + 1
                 }
             }
             # Update the Tag to make sure we grab any change
-            $semver.PreReleaseTag = $project.Value.Cfg.PreReleaseTag
+            $semver.Tag = $project.Value.Cfg.Tag
 
-            $project.Value.Lock |
-            Add-Member -MemberType NoteProperty -Name 'Version' -Value "$semver" -Force
-            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version to Manifest: $semver")
+            $semver.ToVersionJson($PRoot) | Out-Null
+            Update-ModuleManifest -Path $ModPath -ModuleVersion $semver.ToSystemVersion()
+            $project.Value.Log('INFO', 'TASK: ' + $this.Name, "Updated Version $semver")
             $true
         }
         catch {

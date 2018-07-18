@@ -1,11 +1,3 @@
-# Load Classes from C# files
-Add-Type -Path "$PSScriptRoot\objs\PSReleaser.Classes.cs"
-
-# Import Dependancies
-Get-ChildItem -Path "$PSScriptRoot\modules" | ForEach-Object {
-    Import-Module $PSItem.FullName -Force -Global
-}
-
 # Load and Export Vars
 Get-ChildItem -Path "$PSScriptRoot\vars\*ps1" | ForEach-Object {
     . $PSItem.FullName
