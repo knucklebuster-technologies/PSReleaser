@@ -68,16 +68,16 @@ PowerShellVersion = '5.0'
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @(
-    '.\modules\PoshRSJob'
-    '.\modules\PSSelfExtractor'
-    '.\modules\PSSemanticVersion'
+    '.\modules\PoshRSJob\PoshRSJob.psd1'
+    '.\modules\PSSelfExtractor\PSSelfExtractor.psd1'
+    '.\modules\PSSemanticVersion\PSSemanticVersion.psd1'
 )
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @()
+#FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @()
+#CmdletsToExport = @()
 
 # Variables to export from this module
 # VariablesToExport = @()

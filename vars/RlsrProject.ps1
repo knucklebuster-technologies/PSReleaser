@@ -5,9 +5,9 @@
     RunName    = 'null::20173112011045'
     Status     = 'New'
     Running    = 'False'
-    Cfg        = New-Object -TypeName 'PSCustomObject'
-    Manifest   = @{}
-    Lock       = New-Object -TypeName 'PSCustomObject'
+    Cfg        = ''
+    Manifest   = ''
+    Lock       = ''
     Completed  = @()
     LogEntries = @()
 } |

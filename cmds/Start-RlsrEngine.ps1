@@ -5,29 +5,25 @@ function Start-RlsrEngine {
     param (
         [Parameter(HelpMessage="The path to the directory containg the rlsr project files")]
         [string]
-        $Path = "$Pwd",
-
-        [Parameter(HelpMessage="The base name of the rlsr project files to use")]
-        [string]
-        $Name = '*'
+        $Path = "$Pwd"
     )
 
     end {
         $ErrorActionPreference = 'Stop'
-        Write-Verbose -Message "Engine Values: Path=$Path, Name=$Name"
+        Write-Verbose -Message "Engine Values: Path=$Path"
         $Path = Resolve-Path -Path $Path
         Write-Verbose -Message "Directory Path: $Path"
         $p = New-RlsrProject
-        $p.Cfg = Import-RlsrCfgFile -Path $Path -Name $Name
-        $p.Lock = Import-RlsrLock -CfgPath $p.Cfg.FullPath
-        $p.Manifest = Test-ModuleManifest -Path "$Path\$($p.Cfg.ModuleName).psd1"
+        $p.Cfg = Join-Path -Path $Path -ChildPath "psreleaser.cfg"
+        $p.Lock = Join-Path -Path $Path -ChildPath 'psreleaser.lock'
+        $p.Manifest = Get-ChildItem -Path $Path -Include "*psd1" -File | Select-Object -First 1
         $p.Timestamp = [DateTime]::NoW.ToString('yyyyMMddHHmmss')
-        $p.RunName = $p.Cfg.ModuleName + '::' + $p.Timestamp
+        $p.RunName = "$(Split-Path -Path $p.Manifest -Leaf)".Replace('.psd1','') + '::' + $p.Timestamp
         $p.Status = 'Running'
         $p.Running = $true
 
         Write-Verbose -Message "Engine Starting: RUN $($p.RunName) For Module $($p.Cfg.ModuleName) CI process started"
-        $p.Cfg.TaskSequence | ForEach-Object {
+        $(Import-RlsrCfgFile -Path $p.Cfg).TaskSequence | ForEach-Object {
             $taskname = "$PSItem"
             Write-Verbose -Message "Task Invocation: $taskname invoked"
             $ok = $RlsrEngine.Tasks[$taskname].InvokeTask(([ref]$p))

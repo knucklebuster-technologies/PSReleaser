@@ -21,23 +21,16 @@
 function Import-RlsrCfgFile {
     [CmdletBinding()]
     param (
-        [Parameter(HelpMessage = 'The path to directory that contains the modules source and rlsr.cfg file(s)')]
+        [Parameter(HelpMessage = 'The path to the psreleaser.cfg file')]
         [string]
-        $Path,
-
-        [Parameter(HelpMessage = 'The base name of the rlsr.cfg file')]
-        [string]
-        $Name
+        $Path
     )
 
     end {
         try {
             $ErrorActionPreference = 'Stop'
-            Write-Verbose -Message "Path: $Path Name: $Name"
-            $Path = Resolve-Path -Path $Path
-            $FullPath = "$Path\$Name.rlsr.cfg"
-            Write-Verbose -Message "FullPath: $FullPath"
-            $cfgpath = Get-ChildItem -Path $FullPath  | Select-Object -First 1
+            Write-Verbose -Message "Path: $Path"
+            $cfgpath = Resolve-Path -Path $Path
             $cfgobject = Get-Content -Path $cfgpath | ConvertFrom-Json
             $cfgobject | Add-Member -MemberType NoteProperty -Name 'fullPath' -Value $cfgpath -Force
             $cfgobject
